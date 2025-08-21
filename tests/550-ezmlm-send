@@ -16,17 +16,17 @@ EOF
 
   touch "$DIR"/addtrailer
   LOCAL="$LIST"
-  sendfrom test1@example.org
+  sendfrom test1@domain.example
 
   grephdr_list 1
   grephdr Precedence: bulk
   grephdr X-No-Archive: yes
   grephdr Delivered-To: "mailing list ${LIST}@${HOST}"
-  grephdr From: test1@example.org
+  grephdr From: test1@domain.example
   grephdr Subject: '\[PFX\] test post'
   grephdr X-Test-Header: one
   grephdr Sender: "<${LIST}@${HOST}>"
-  grephdr Reply-To: test1@example.org
+  grephdr Reply-To: test1@domain.example
   grephdr_empty
 
   grepbody Local: "$LOCAL"
@@ -40,13 +40,13 @@ EOF
   grephdr Subject: 'test post'
 
   touch "$DIR"/replytolist
-  sendfrom test2@example.org
+  sendfrom test2@domain.example
 
   grephdr_list 1
   grephdr Precedence: bulk
   grephdr X-No-Archive: yes
   grephdr Delivered-To: "mailing list ${LIST}@${HOST}"
-  grephdr From: test2@example.org
+  grephdr From: test2@domain.example
   grephdr Subject: 'test post'
   grephdr X-Test-Header: one
   grephdr Sender: "<${LIST}@${HOST}>"
