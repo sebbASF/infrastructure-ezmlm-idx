@@ -50,7 +50,7 @@ const char USAGE[] =
 
 static int ignoredflag;
 static const char *hash_str = 0;
-static char *mlheader = 0;
+static const char *mlheader = 0;
 static int flagrewritefrom = 0;
 static int flagreplytolist = 0;
 
@@ -383,7 +383,7 @@ int main(int argc,char **argv)
   getconfopt(argc,argv,options,1,0);
   /* Fix up some command-line arguments. */
   if (mlheader != 0)
-    mlheader[str_chr(mlheader,':')] = '\0';
+    ((char*)mlheader)[str_chr(mlheader,':')] = '\0'; /* Ugly, but it should point to writable memory */
   if (hash_str != 0) {
     pos = scan_ulong(hash_str,&hash_lo);
     if (hash_str[pos++]) {
@@ -452,9 +452,9 @@ int main(int argc,char **argv)
     pos = byte_rchr(sublist.s,sublist.len,'@');	/* checked in sublistmatch */
     if (str_start(sender+pos,"-return-"))
       pos += 8;
-      pos += scan_ulong(sender+pos,&innum);
-      if (!flagarchived && innum && sender[pos] == '-')
-        outnum = innum;
+    pos += scan_ulong(sender+pos,&innum);
+    if (!flagarchived && innum && sender[pos] == '-')
+      outnum = innum;
   }
   szmsgnum[fmt_ulong(szmsgnum,outnum)] = '\0';
   set_cpnum(szmsgnum);				/* for copy */
