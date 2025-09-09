@@ -120,6 +120,27 @@ grephdr Reply-To: "List for responses 16 <test16listreply@example.org>"
 singlehdr Cc:
 grephdr Cc: 'My Test 16 ReplyTo <test16mailreply@example.org>, "Carbon Copy 16" <cc16@example.org>, My Test 16 <test16@example.org>'
 
+touch "$DIR"/replytolist
+echo "List for responses 17 <test17listreply@example.org>" > "$DIR"/replyto
+
+cat >"$TMP" <<EOF
+From: My Test 17 <test17@example.org>
+Reply-To: My Test 17 ReplyTo <test17mailreply@example.org>
+To: ${LIST}@${HOST}
+Cc: "Carbon Copy 17" <cc17@example.org>
+Subject: reply-to and carbon-copied test post
+
+message goes here
+EOF
+${EZBIN}/ezmlm-send "$DIR" <"$TMP" >"$ERR" 2>&1 || \
+    fatal "failed to produce post"
+unfoldhdrs
+grephdr From: "\"My Test 17 via ${LIST}\" <${LIST}@${HOST}>$"
+singlehdr Reply-To:
+grephdr Reply-To: "List for responses 17 <test17listreply@example.org>"
+singlehdr Cc:
+grephdr Cc: 'My Test 17 ReplyTo <test17mailreply@example.org>, "Carbon Copy 17" <cc17@example.org>, My Test 17 <test17@example.org>'
+
 rm -f "$DIR"/replyto
 rm -f "$DIR"/rewritefrom
 

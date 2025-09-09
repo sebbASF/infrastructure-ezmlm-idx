@@ -634,9 +634,7 @@ int main(int argc,char **argv)
       } else {
         flagbadfield = headerremoveflag;
         flagarchiveonly = 0;
-	if (flagreplytolist && case_startb(line.s,line.len,"reply-to:"))
-	  flagbadfield = 1;
-	else if (constmap(&headerremovemap,line.s,byte_chr(line.s,line.len,':')))
+	if (constmap(&headerremovemap,line.s,byte_chr(line.s,line.len,':')))
 	  flagbadfield = !headerremoveflag;
         if ((flagnoreceived || !flagsawreceived) &&
 		case_startb(line.s,line.len,"Received:")) {

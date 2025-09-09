@@ -65,6 +65,7 @@ EOF
   grephdr X-Test-Header: one
   grephdr Sender: "<${LIST}@${HOST}>"
   grephdr Reply-To: "<${LIST}@${HOST}>"
+  grephdr Cc: test2@domain.example
   grephdr_empty
 
   rm -f "$DIR"/replytolist
