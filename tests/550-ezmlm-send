@@ -69,4 +69,40 @@ EOF
 
   rm -f "$DIR"/replytolist
 
+  echo "Other List for Responses <test3@domain.example>" > "$DIR"/replyto
+  sendfrom test4@domain.example
+
+  grephdr_list 1
+  grephdr Precedence: bulk
+  grephdr X-No-Archive: yes
+  grephdr Delivered-To: "mailing list ${LIST}@${HOST}"
+  grephdr From: test4@domain.example
+  grephdr Subject: 'test post'
+  grephdr X-Test-Header: one
+  grephdr Sender: "<${LIST}@${HOST}>"
+  grephdr Reply-To: "Other List for Responses <test3@domain.example>"
+  grephdr_empty
+
+  rm -f "$DIR"/replyto
+
+  # To test:
+  # - 'replyto' with rewritefrom (orig 'replyto' moves to 'cc')
+  # - 'replyto' with replyto in original mail *and* rewritefrom ('from' and 'replyto' move to 'cc')
+  echo "Other List for Responses <test3@domain.example>" > "$DIR"/replyto
+  sendfrom test4@domain.example test5@domain.example
+
+  grephdr_list 1
+  grephdr Precedence: bulk
+  grephdr X-No-Archive: yes
+  grephdr Delivered-To: "mailing list ${LIST}@${HOST}"
+  grephdr From: test4@domain.example
+  grephdr Subject: 'test post'
+  grephdr X-Test-Header: one
+  grephdr Sender: "<${LIST}@${HOST}>"
+  grephdr Reply-To: "Other List for Responses <test3@domain.example>"
+  grephdr Cc: test5@domain.example
+  grephdr_empty
+
+  rm -f "$DIR"/replyto
+
   echo OK

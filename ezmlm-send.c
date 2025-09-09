@@ -81,6 +81,7 @@ static stralloc lines = {0};
 static stralloc subject = {0};
 static stralloc from = {0};
 static stralloc received = {0};
+static stralloc replyto = {0};
 static stralloc cc = {0};
 static stralloc prefix = {0};
 static stralloc content = {0};
@@ -112,7 +113,6 @@ static int flagfoundokpart;		/* Found something to pass on. If multipart */
 					/* we set to 0 and then set to 1 for any */
 					/* acceptable mime part. If 0 -> reject */
 static int flagsawreceived;
-static int flaghavereplyto;
 static int flagprefixed;
 static unsigned int serial = 0;
 static int flagarchived;
@@ -316,6 +316,25 @@ int idx_copy_insertsubject(void)
   return r;
 }
 
+static void set_or_add_cc(stralloc address)
+{
+  if (cc.s) {
+    --cc.len;	/* remove '\n' */
+    if (!stralloc_catb(&cc,",\n",2)) die_nomem();
+    if (*(address.s) != ' ')
+      if (!stralloc_catb(&cc," ",1)) die_nomem();
+  }
+  if (!stralloc_catb(&cc,address.s,address.len)) die_nomem();
+}
+
+static void set_replyto_or_add_cc(stralloc address)
+{
+  if (replyto.s)
+    set_or_add_cc(address);
+  else
+    if (!stralloc_copyb(&replyto,address.s,address.len)) die_nomem();
+}
+
 static void rewrite_from()
 {
   unsigned int at;
@@ -352,21 +371,17 @@ static void rewrite_from()
     if (!stralloc_catb(&line,"@",1)) die_nomem();
     if (!stralloc_catb(&line,outhost.s,outhost.len)) die_nomem();
     if (!stralloc_catb(&line,">\n",2)) die_nomem();
-    if (flagreplytolist) {
-      if (cc.s) {
-        --cc.len;	/* remove '\n' */
-        if (!stralloc_catb(&cc,",\n",2)) die_nomem();
-      }
-      if (!stralloc_catb(&cc,from.s,from.len)) die_nomem();
-    } else if (!flaghavereplyto) {
-      if (!stralloc_catb(&line,"Reply-To:",9)) die_nomem();
-      if (!stralloc_catb(&line,from.s,from.len)) die_nomem();
-    }
+
+    set_replyto_or_add_cc(from);
   } else {
     if (!stralloc_copyb(&line,"From:",5)) die_nomem();
     if (!stralloc_catb(&line,from.s,from.len)) die_nomem();
   }
 
+  if (replyto.s) {
+    if (!stralloc_catb(&line,"Reply-To:",9)) die_nomem();
+    if (!stralloc_catb(&line,replyto.s,replyto.len)) die_nomem();
+  }
   if (cc.s) {
     if (!stralloc_catb(&line,"Cc:",3)) die_nomem();
     if (!stralloc_catb(&line,cc.s,cc.len)) die_nomem();
@@ -523,13 +538,18 @@ int main(int argc,char **argv)
   }
   copy(&qq,"headeradd",'H');
   qa_put(mydtline.s,mydtline.len);
-  if (flagreplytolist) {
-    if (!stralloc_copyb(&line,"Reply-To: <",11)) die_nomem();
-    if (!stralloc_cat(&line,&outlocal)) die_nomem();
-    if (!stralloc_append(&line,'@')) die_nomem();
-    if (!stralloc_cat(&line,&outhost)) die_nomem();
-    if (!stralloc_catb(&line,">\n",2)) die_nomem();
-    qa_put(line.s,line.len);
+
+  static stralloc tmpstr = {0};
+  if (getconf_line(&tmpstr,"replyto",0)) {
+    if (!stralloc_copys(&replyto," ")) die_nomem();
+    if (!stralloc_cat(&replyto,&tmpstr)) die_nomem();
+    if (!stralloc_catb(&replyto,"\n",1)) die_nomem();
+  } else if (flagreplytolist) {
+    if (!stralloc_copys(&replyto," <")) die_nomem();
+    if (!stralloc_cat(&replyto,&outlocal)) die_nomem();
+    if (!stralloc_append(&replyto,'@')) die_nomem();
+    if (!stralloc_cat(&replyto,&outhost)) die_nomem();
+    if (!stralloc_catb(&replyto,">\n",2)) die_nomem();
   }
 
   flagmlwasthere = 0;
@@ -539,7 +559,6 @@ int main(int argc,char **argv)
   flagbadpart = 0;
   flagseenext = 0;
   flagsawreceived = 0;
-  flaghavereplyto = 0;
   flagarchiveonly = 0;
   for (;;) {
     if (gethdrln(subfdin,&line,&match,'\n') == -1)
@@ -655,10 +674,13 @@ int main(int argc,char **argv)
           else if (case_startb(cp,cpafter-cp,"Quoted-Printable")) encin = 'Q';
         } else if (flaglistid && case_startb(line.s,line.len,"list-id:"))
 	  flagbadfield = 1;		/* suppress if we added our own */
-        else if (!flagbadfield && case_startb(line.s,line.len,"Reply-To:"))
-          flaghavereplyto = 1;
-        else if (case_startb(line.s,line.len,"Cc:")) {
-          if (!stralloc_copyb(&cc,line.s+3,line.len-3)) die_nomem();
+        else if (!flagbadfield && case_startb(line.s,line.len,"Reply-To:")) {
+          if (!stralloc_copyb(&tmpstr,line.s+9,line.len-9)) die_nomem();
+          set_replyto_or_add_cc(tmpstr);
+          flagbadfield = 1;		/* written/adjusted by rewrite_from() */
+	} else if (case_startb(line.s,line.len,"Cc:")) {
+          if (!stralloc_copyb(&tmpstr,line.s+3,line.len-3)) die_nomem();
+          set_or_add_cc(tmpstr);
           flagbadfield = 1;		/* written/adjusted by rewrite_from() */
         } else if (case_startb(line.s,line.len,"From:")) {
 	  if (!stralloc_copyb(&from,line.s+5,line.len-5)) die_nomem();
