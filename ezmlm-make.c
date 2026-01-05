@@ -153,7 +153,7 @@ void f_open(const char *slash)
   if (fd == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_CREATE,dirplus.s));
 
-  substdio_fdbuf(&ss,write,fd,ssbuf,sizeof(ssbuf));
+  substdio_fdbuf(&ss,substdio_write,fd,ssbuf,sizeof(ssbuf));
 }
 
 void f_put(const char *buf,unsigned int len)

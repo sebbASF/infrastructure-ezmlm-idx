@@ -43,8 +43,7 @@ extern int issub(const char *subdir,
 extern unsigned long putsubs(const char *subdir,
 			     unsigned long hash_lo,
 			     unsigned long hash_hi,
-			     int subwrite());
-/*		int subwrite(char *string, unsigned int length); */
+			     int subwrite(const char* s, unsigned int l));
 
 extern const char *logmsg(unsigned long msgnum,
 			  unsigned long,
@@ -53,7 +52,7 @@ extern const char *logmsg(unsigned long msgnum,
 
 extern void searchlog(const char *subdir,
 		      char *search,
-		      int subwrite());
+		      int subwrite(const char *s, unsigned int l));
 
 extern int subscribe(const char *subdir,
 		     const char *username,
@@ -95,12 +94,12 @@ struct sub_plugin
 			   const char *table,
 			   unsigned long hash_lo,
 			   unsigned long hash_hi,
-			   int subwrite());
+			   int subwrite(const char * s, unsigned int l));
   const char *(*rmtab)(struct subdbinfo *info);
   void (*searchlog)(struct subdbinfo *info,
 		    const char *table,
 		    char *search,
-		    int subwrite());
+		    int subwrite(const char* s, unsigned int l));
   int (*subscribe)(struct subdbinfo *info,
 		   const char *table,
 		   const char *username,

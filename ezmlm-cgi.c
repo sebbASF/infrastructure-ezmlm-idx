@@ -172,7 +172,7 @@ void die_syntax(const char *s)
 }
 
 static char outbuf[4096];
-static substdio ssout = SUBSTDIO_FDBUF(write,1,outbuf,sizeof(outbuf));
+static substdio ssout = SUBSTDIO_FDBUF(substdio_write,1,outbuf,sizeof(outbuf));
 
 void oput(const char *s, unsigned int l)
 /* unbuffered. Avoid extra copy as httpd buffers */

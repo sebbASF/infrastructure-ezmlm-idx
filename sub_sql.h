@@ -63,7 +63,7 @@ extern unsigned long sub_sql_putsubs(struct subdbinfo *info,
 				     const char *table,
 				     unsigned long hash_lo,
 				     unsigned long hash_hi,
-				     int subwrite());
+				     int subwrite(const char* s, unsigned int length));
 extern void sub_sql_searchlog(struct subdbinfo *info,
 			      const char *table,
 			      char *search,

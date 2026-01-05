@@ -209,7 +209,7 @@ void store_from(stralloc *frl,	/* from line */
   lock();
   if ((fdout = open_trunc("fromn")) == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_OPEN,"fromn"));
-  substdio_fdbuf(&ssfrom,write,fdout,frombuf,(int) sizeof(frombuf));
+  substdio_fdbuf(&ssfrom,substdio_write,fdout,frombuf,(int) sizeof(frombuf));
   if ((fdin = open_read("from")) == -1) {
     if (errno != error_noent)
       strerr_die2sys(111,FATAL,MSG1(ERR_OPEN,"from"));
@@ -973,7 +973,7 @@ static void do_ed(char *action)
   fd = open_trunc(fneditn.s);
   if (fd == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,fneditn.s));
-  substdio_fdbuf(&sstext,write,fd,textbuf,sizeof(textbuf));
+  substdio_fdbuf(&sstext,substdio_write,fd,textbuf,sizeof(textbuf));
   if (!stralloc_copys(&quoted,"")) die_nomem();	/* clear */
   if (!stralloc_copys(&text,"")) die_nomem();
 

@@ -101,7 +101,7 @@ stralloc *line;
       fdout = open_trunc(target.s);
       if (fdout == -1)
 	strerr_die3sys(111,FATAL,"unable to write ",target.s);
-      substdio_fdbuf(&ssout,write,fdout,outbuf,sizeof(outbuf));
+      substdio_fdbuf(&ssout,substdio_write,fdout,outbuf,sizeof(outbuf));
 
       switch(substdio_copy(&ssout,&ssin)) {
 	case -2:

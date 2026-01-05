@@ -211,7 +211,7 @@ int main(int argc,char **argv)
         strerr_die2sys(100,FATAL,MSG1(ERR_WRITE,fnifn.s));
 
 			/* set up buffers for index */
-      substdio_fdbuf(&ssindex,write,fdindexn,indexbuf,sizeof(indexbuf));
+      substdio_fdbuf(&ssindex,substdio_write,fdindexn,indexbuf,sizeof(indexbuf));
 
 			/* Get subject without the 'Subject: ' */
 			/* make sure there is one */

@@ -106,7 +106,7 @@ int main(int argc,char **argv)
         fd = open_trunc("tstdign");
         if (fd == -1)
           strerr_die2sys(111,FATAL,MSG1(ERR_CREATE,"tstdign"));
-        substdio_fdbuf(&ssnum,write,fd,numbuf,sizeof(numbuf));
+        substdio_fdbuf(&ssnum,substdio_write,fd,numbuf,sizeof(numbuf));
         if (substdio_put(&ssnum,strnum,fmt_ulong(strnum,when)) == -1)
           strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,"tstdign"));
         if (substdio_puts(&ssnum,"\n") == -1)

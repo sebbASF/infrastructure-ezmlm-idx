@@ -237,7 +237,7 @@ void write_ulong(unsigned long num,unsigned long cum,unsigned long dat,
   fd = open_trunc(fnn);
   if (fd == -1)
      strerr_die2sys(111,FATAL,MSG1(ERR_CREATE,fnn));
-  substdio_fdbuf(&ssnum,write,fd,numbuf,sizeof(numbuf));
+  substdio_fdbuf(&ssnum,substdio_write,fd,numbuf,sizeof(numbuf));
   if (substdio_put(&ssnum,strnum,fmt_ulong(strnum,num)) == -1)
      strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,fnn));
   if (substdio_puts(&ssnum,":") == -1)

@@ -207,7 +207,7 @@ static unsigned long _putsubs(struct subdbinfo *info,
 			      const char *subdir,
 			      unsigned long hash_lo,
 			      unsigned long hash_hi,
-			      int subwrite())	/* write function. */
+			      int subwrite(const char* s, unsigned int l))	/* write function. */
 {
   static stralloc line = {0};
 
@@ -247,7 +247,7 @@ static unsigned long _putsubs(struct subdbinfo *info,
     (void)info;
 }
 
-static void lineout(const stralloc *line, int subwrite())
+static void lineout(const stralloc *line, int subwrite(const char *s, unsigned int l))
 {
   struct datetime dt;
   char date[DATE822FMT];
@@ -269,7 +269,7 @@ static void lineout(const stralloc *line, int subwrite())
 static void _searchlog(struct subdbinfo *info,
 		       const char *subdir,
 		       char *search,		/* search string */
-		       int subwrite())		/* output fxn */
+		       int subwrite(const char *s, unsigned int l))		/* output fxn */
 {
   static stralloc line = {0};
 
@@ -402,7 +402,7 @@ static int _subscribe(struct subdbinfo *info,
 				/* do lower case hashed version first */
     fdnew = open_trunc(fnnew.s);
     if (fdnew == -1) die_write(fnnew.s);
-    substdio_fdbuf(&ssnew,write,fdnew,ssnewbuf,sizeof(ssnewbuf));
+    substdio_fdbuf(&ssnew,substdio_write,fdnew,ssnewbuf,sizeof(ssnewbuf));
 
     flagwasthere = 0;
 
@@ -461,7 +461,7 @@ static int _subscribe(struct subdbinfo *info,
     fnnew.s[fnnew.len - 3] = ch;
     fdnew = open_trunc(fnnew.s);
     if (fdnew == -1) die_write(fnnew.s);
-    substdio_fdbuf(&ssnew,write,fdnew,ssnewbuf,sizeof(ssnewbuf));
+    substdio_fdbuf(&ssnew,substdio_write,fdnew,ssnewbuf,sizeof(ssnewbuf));
 
     fd = open_read(fn.s);
     if (fd == -1) {

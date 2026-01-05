@@ -119,7 +119,7 @@ static void doit(const char *workdir,const char *addr,unsigned long msgnum,unsig
 
   fd = open_trunc(fndatenew.s);
   if (fd == -1) die_datenew();
-  substdio_fdbuf(&ssout,write,fd,outbuf,sizeof(outbuf));
+  substdio_fdbuf(&ssout,substdio_write,fd,outbuf,sizeof(outbuf));
   if (substdio_puts(&ssout,addr) == -1) die_datenew();
   if (substdio_put(&ssout,"",1) == -1) die_datenew();
   if (substdio_put(&ssout,strnum,fmt_ulong(strnum,msgnum)) == -1)

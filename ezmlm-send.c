@@ -190,7 +190,7 @@ void numwrite(void)
 
   fd = open_trunc("numnew");
   if (fd == -1) die_numnew();
-  substdio_fdbuf(&ssnumnew,write,fd,numnewbuf,sizeof(numnewbuf));
+  substdio_fdbuf(&ssnumnew,substdio_write,fd,numnewbuf,sizeof(numnewbuf));
   if (substdio_put(&ssnumnew,strnum,fmt_ulong(strnum,msgnum)) == -1)
     die_numnew();
   if (substdio_puts(&ssnumnew,":") == -1) die_numnew();
@@ -247,7 +247,7 @@ int idx_copy_insertsubject(void)
     strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,fnifn.s));
 
 			/* set up buffers for indexn */
-  substdio_fdbuf(&ssindexn,write,fdindexn,indexnbuf,sizeof(indexnbuf));
+  substdio_fdbuf(&ssindexn,substdio_write,fdindexn,indexnbuf,sizeof(indexnbuf));
 
   concatHDR(subject.s,subject.len,&lines);	/* make 1 line */
   decodeHDR(lines.s,lines.len,&qline);		/* decode mime */
@@ -514,7 +514,7 @@ int main(int argc,char **argv)
     if (fdarchive == -1)
       strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,fnaf.s));
 
-    substdio_fdbuf(&ssarchive,write,fdarchive,archivebuf,sizeof(archivebuf));
+    substdio_fdbuf(&ssarchive,substdio_write,fdarchive,archivebuf,sizeof(archivebuf));
 						/* return-path to archive */
     if (!stralloc_copys(&line,"Return-Path: <")) die_nomem();
     if (sender) {				/* same as qmail-local */
