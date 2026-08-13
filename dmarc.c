@@ -68,3 +68,16 @@ int dmarc_p_reject(const char *domain)
     return 0;
   return data.len == 6 && byte_equal(data.s,6,"reject");
 }
+
+int dmarc_p_quarantine(const char *domain)
+{
+  static stralloc data;
+  int r;
+
+  r = dmarc_fetch(&data,domain);
+  if (r <= 0)
+    return r;
+  if (!dmarc_get(&data,"p",&data))
+    return 0;
+  return data.len == 10 && byte_equal(data.s,10,"quarantine");
+}

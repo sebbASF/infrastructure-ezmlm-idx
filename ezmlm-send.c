@@ -354,7 +354,10 @@ static void rewrite_from()
     if (!stralloc_0(&dummy)) die_nomem();
     r = dmarc_p_reject(dummy.s);
     if (r < 0) die_dns(dummy.s);
-    flagrewritefrom = r;
+    // Same thing as reject, but for p=quarantine records
+    q = dmarc_p_quarantine(dummy.s);
+    if (q < 0) die_dns(dummy.s);
+    flagrewritefrom = r||q; // If either p=reject or p=quarantine, rewrite things
   }
 
   if (flagrewritefrom) {
