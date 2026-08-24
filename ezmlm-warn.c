@@ -326,7 +326,7 @@ static void dodir(int flagdig)
   fd = open_trunc(line.s);			/* write lastd. Do safe */
 						/* since we read before lock*/
   if (fd == -1) strerr_die2sys(111,FATAL,MSG1(ERR_OPEN,line.s));
-  substdio_fdbuf(&ssout,write,fd,outbuf,sizeof(outbuf));
+  substdio_fdbuf(&ssout,substdio_write,fd,outbuf,sizeof(outbuf));
   if (substdio_put(&ssout,strnum,fmt_ulong(strnum,when)) == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,line.s));
   if (substdio_put(&ssout,"\n",1) == -1)	/* prettier */
@@ -389,7 +389,7 @@ static void dodir(int flagdig)
 
   fd = open_trunc(fnlasth.s);			/* write lasth */
   if (fd == -1) strerr_die2sys(111,FATAL,MSG1(ERR_OPEN,fnlasth.s));
-  substdio_fdbuf(&ssout,write,fd,outbuf,sizeof(outbuf));
+  substdio_fdbuf(&ssout,substdio_write,fd,outbuf,sizeof(outbuf));
   if (substdio_put(&ssout,lasth.s,1) == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_OPEN,fnlasth.s));
   if (substdio_put(&ssout,"\n",1) == -1)	/* prettier */

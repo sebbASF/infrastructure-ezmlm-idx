@@ -3,5 +3,5 @@
 #include "subfd.h"
 
 static char outbuf[1024];
-static substdio it = SUBSTDIO_FDBUF(write,1,outbuf,sizeof outbuf);
+static substdio it = SUBSTDIO_FDBUF(substdio_write,1,outbuf,sizeof outbuf);
 substdio *const subfdout = &it;

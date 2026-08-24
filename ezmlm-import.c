@@ -54,7 +54,7 @@ static int openone(unsigned long outnum)
   if ((fd = open_trunc(fnaf.s)) == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,fnaf.s));
 
-  substdio_fdbuf(&ssarchive,write,fd,archivebuf,sizeof archivebuf);
+  substdio_fdbuf(&ssarchive,substdio_write,fd,archivebuf,sizeof archivebuf);
   return fd;
 }
 

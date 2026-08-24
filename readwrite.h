@@ -2,7 +2,6 @@
 #define READWRITE_H
 
 #include <sys/types.h>
-extern ssize_t read();
-extern ssize_t write();
+#include <unistd.h>
 
 #endif

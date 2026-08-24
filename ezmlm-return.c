@@ -116,7 +116,7 @@ static void dowit(const char *addr,unsigned long when,const stralloc *bounce)
 
   fd = open_trunc(fndatenew.s);
   if (fd == -1) die_datenew();
-  substdio_fdbuf(&ssout,write,fd,outbuf,sizeof(outbuf));
+  substdio_fdbuf(&ssout,substdio_write,fd,outbuf,sizeof(outbuf));
   if (substdio_puts(&ssout,addr) == -1) die_datenew();
   if (substdio_put(&ssout,"",1) == -1) die_datenew();
   if (substdio_puts(&ssout,"Return-Path: <") == -1) die_datenew();
@@ -174,7 +174,7 @@ static void doit(const char *addr,unsigned long msgnum,unsigned long when,
 
   fd = open_trunc(fndatenew.s);
   if (fd == -1) die_datenew();
-  substdio_fdbuf(&ssout,write,fd,outbuf,sizeof(outbuf));
+  substdio_fdbuf(&ssout,substdio_write,fd,outbuf,sizeof(outbuf));
   if (substdio_puts(&ssout,addr) == -1) die_datenew();
   if (substdio_put(&ssout,"",1) == -1) die_datenew();
   if (substdio_puts(&ssout,"Return-Path: <") == -1) die_datenew();
@@ -205,7 +205,7 @@ static void doit(const char *addr,unsigned long msgnum,unsigned long when,
 
   fdnew = open_trunc(fnhashnew.s);
   if (fdnew == -1) die_hashnew();
-  substdio_fdbuf(&ssout,write,fdnew,outbuf,sizeof(outbuf));
+  substdio_fdbuf(&ssout,substdio_write,fdnew,outbuf,sizeof(outbuf));
 
   fd = open_read(fnhash.s);
   if (fd == -1) {

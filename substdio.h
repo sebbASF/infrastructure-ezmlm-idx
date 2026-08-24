@@ -2,7 +2,14 @@
 #define SUBSTDIO_H
 
 #include <sys/types.h>
-typedef ssize_t (*substdio_fn)();
+#include <sys/unistd.h>
+typedef ssize_t (*substdio_fn)(int fd, void *buf, size_t count);
+
+// Make the compiler happy about unistd 'write' promising 'const void*'
+static __attribute__((unused))
+ssize_t substdio_write(int fd, void * buf, size_t count) {
+  return write(fd, buf, count);
+}
 
 typedef struct substdio {
   char *x;

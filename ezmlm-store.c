@@ -240,7 +240,7 @@ int main(int argc,char **argv)
   fdmsg = open_trunc(fnmsg.s);
   if (fdmsg == -1)
     strerr_die2sys(111,FATAL,MSG1(ERR_WRITE,fnmsg.s));
-  substdio_fdbuf(&ssmsg,write,fdmsg,msgbuf,sizeof(msgbuf));
+  substdio_fdbuf(&ssmsg,substdio_write,fdmsg,msgbuf,sizeof(msgbuf));
 
   if (qmail_open(&qq) == -1)		/* Open mailer */
     strerr_die2sys(111,FATAL,MSG(ERR_QMAIL_QUEUE));
