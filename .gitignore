@@ -1,0 +1,11 @@
+/direntry.h
+/hasattribute.h
+/hasflock.h
+/hassgact.h
+/haswaitp.h
+/iopause.h
+/select.h  
+/uint32.h
+/uint64.h
+/messages-txt.c
+/auto_*.c
