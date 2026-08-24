@@ -56,7 +56,7 @@ int dmarc_get(const stralloc *rec,const char *key,stralloc *out)
   return 0;
 }
 
-int dmarc_p_reject(const char *domain)
+int dmarc_p_reject_or_quarantine(const char *domain)
 {
   static stralloc data;
   int r;
@@ -66,5 +66,9 @@ int dmarc_p_reject(const char *domain)
     return r;
   if (!dmarc_get(&data,"p",&data))
     return 0;
-  return data.len == 6 && byte_equal(data.s,6,"reject");
+  if (data.len == 6 && byte_equal(data.s,6,"reject"))
+    return 1;
+  if (data.len == 10 && byte_equal(data.s,10,"quarantine"))
+    return 1;
+  return 0;
 }

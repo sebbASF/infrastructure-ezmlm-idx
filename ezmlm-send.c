@@ -338,7 +338,7 @@ static void set_replyto_or_add_cc(stralloc address)
 static void rewrite_from()
 {
   unsigned int at;
-  int r;
+  int rq;
 
   if (!stralloc_copyb(&line,"",0)) die_nomem();
 
@@ -352,9 +352,9 @@ static void rewrite_from()
       return;
     if (!stralloc_copyb(&dummy,author.s + at,author.len - at)) die_nomem();
     if (!stralloc_0(&dummy)) die_nomem();
-    r = dmarc_p_reject(dummy.s);
-    if (r < 0) die_dns(dummy.s);
-    flagrewritefrom = r;
+    rq = dmarc_p_reject_or_quarantine(dummy.s);
+    if (rq < 0) die_dns(dummy.s);
+    flagrewritefrom = rq;
   }
 
   if (flagrewritefrom) {
