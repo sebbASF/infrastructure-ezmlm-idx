@@ -2,31 +2,37 @@ prompt "ezmlm-send (from):    "
 
 touch "$DIR"/rewritefrom
 
-sendfrom '"My Name 1" <test1@example.org>'
+# Using 'domain.example' since that's unlikely to get
+# a DMARC header that'd get in the way of normal processing:
+
+sendfrom '"My Name 1" <test1@domain.example>'
 grephdr From: "\"My Name 1 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: '"My Name 1" <test1@example.org>'
+grephdr Reply-To: '"My Name 1" <test1@domain.example>'
 
-sendfrom '"My Name 2" test2@example.org'
+sendfrom '"My Name 2" test2@domain.example'
 grephdr From: "\"My Name 2 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: '"My Name 2" test2@example.org'
+grephdr Reply-To: '"My Name 2" test2@domain.example'
 
-sendfrom 'My Name 3 <test3@example.org>'
+sendfrom 'My Name 3 <test3@domain.example>'
 grephdr From: "\"My Name 3 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: 'My Name 3 <test3@example.org>'
+grephdr Reply-To: 'My Name 3 <test3@domain.example>'
 
-sendfrom 'test4@example.org (My Name 4)'
+sendfrom 'test4@domain.example (My Name 4)'
 grephdr From: "\"My Name 4 via ${LIST}\" <${LIST}@${HOST}>$"
-grephdr Reply-To: 'test4@example.org \(My Name 4\)'
+grephdr Reply-To: 'test4@domain.example \(My Name 4\)'
 
-sendfrom 'test5@example.org'
-grephdr From: "\"test5.example.org via ${LIST}\" <${LIST}@${HOST}>$"
+sendfrom 'test5@domain.example'
+grephdr From: "\"test5.domain.example via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: 'test5@example.org'
+grephdr Reply-To: 'test5@domain.example'
 
 rm -f "$DIR"/rewritefrom
+
+# yahoo.com has a p=reject policy, so implicitly gets
+# rewritefrom enabled:
 
 sendfrom 'test6@yahoo.com'
 grephdr From: "\"test6.yahoo.com via ${LIST}\" <${LIST}@${HOST}>$"
@@ -43,31 +49,39 @@ grephdr From: "\"My Name 8 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
 grephdr Reply-To: 'My Name 8 <test8@yahoo.com>'
 
+# github.com has a p=quarantine policy, so implicitly gets
+# rewritefrom enabled:
+
+sendfrom 'test6@github.com'
+grephdr From: "\"test6.github.com via ${LIST}\" <${LIST}@${HOST}>$"
+singlehdr Reply-To:
+grephdr Reply-To: 'test6@github.com'
+
 touch "$DIR"/rewritefrom
 
-sendfrom 'My Name 11 <test11@example.org>' 'Reply To 11 <reply11@example.org>'
+sendfrom 'My Name 11 <test11@domain.example>' 'Reply To 11 <reply11@domain.example>'
 grephdr From: "\"My Name 11 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: 'Reply To 11 <reply11@example.org>'
+grephdr Reply-To: 'Reply To 11 <reply11@domain.example>'
 
-sendfrom test12@domain.example test12@domain.example
-grephdr From: "\"test12.domain.example via ${LIST}\" <${LIST}@${HOST}>$"
+sendfrom test12@domain.examplee test12@domain.examplee
+grephdr From: "\"test12.domain.examplee via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: 'test12@domain.example'
+grephdr Reply-To: 'test12@domain.examplee'
 
 touch "$DIR"/replytolist
 
-sendfrom '"My Name 13" <test13@example.org>'
+sendfrom '"My Name 13" <test13@domain.example>'
 grephdr From: "\"My Name 13 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
 grephdr Reply-To: "<${LIST}@${HOST}>"
 singlehdr Cc:
-grephdr Cc: '"My Name 13" <test13@example.org>'
+grephdr Cc: '"My Name 13" <test13@domain.example>'
 
 cat >"$TMP" <<EOF
-From: test14@example.org
+From: test14@domain.example
 To: ${LIST}@${HOST}
-Cc: cc14@example.org
+Cc: cc14@domain.example
 Subject: carbon-copied test post
 
 message goes here
@@ -75,17 +89,17 @@ EOF
 ${EZBIN}/ezmlm-send "$DIR" <"$TMP" >"$ERR" 2>&1 || \
     fatal "failed to produce post"
 unfoldhdrs
-grephdr From: "\"test14.example.org via ${LIST}\" <${LIST}@${HOST}>$"
+grephdr From: "\"test14.domain.example via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
 grephdr Reply-To: "<${LIST}@${HOST}>"
 singlehdr Cc:
-grephdr Cc: 'cc14@example.org, test14@example.org'
+grephdr Cc: 'cc14@domain.example, test14@domain.example'
 
 cat >"$TMP" <<EOF
-From: My Test 15 <test15@example.org>
+From: My Test 15 <test15@domain.example>
 To: ${LIST}@${HOST}
-Cc: "Carbon Copy 15" <cc15@example.org>,
- <cc15-addtl@example.org>
+Cc: "Carbon Copy 15" <cc15@domain.example>,
+ <cc15-addtl@domain.example>
 Subject: carbon-copied test post
 
 message goes here
@@ -97,16 +111,16 @@ grephdr From: "\"My Test 15 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
 grephdr Reply-To: "<${LIST}@${HOST}>"
 singlehdr Cc:
-grephdr Cc: '"Carbon Copy 15" <cc15@example.org>, <cc15-addtl@example.org>, My Test 15 <test15@example.org>'
+grephdr Cc: '"Carbon Copy 15" <cc15@domain.example>, <cc15-addtl@domain.example>, My Test 15 <test15@domain.example>'
 
 rm -f "$DIR"/replytolist
-echo "List for responses 16 <test16listreply@example.org>" > "$DIR"/replyto
+echo "List for responses 16 <test16listreply@domain.example>" > "$DIR"/replyto
 
 cat >"$TMP" <<EOF
-From: My Test 16 <test16@example.org>
-Reply-To: My Test 16 ReplyTo <test16mailreply@example.org>
+From: My Test 16 <test16@domain.example>
+Reply-To: My Test 16 ReplyTo <test16mailreply@domain.example>
 To: ${LIST}@${HOST}
-Cc: "Carbon Copy 16" <cc16@example.org>
+Cc: "Carbon Copy 16" <cc16@domain.example>
 Subject: reply-to and carbon-copied test post
 
 message goes here
@@ -116,18 +130,18 @@ ${EZBIN}/ezmlm-send "$DIR" <"$TMP" >"$ERR" 2>&1 || \
 unfoldhdrs
 grephdr From: "\"My Test 16 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: "List for responses 16 <test16listreply@example.org>"
+grephdr Reply-To: "List for responses 16 <test16listreply@domain.example>"
 singlehdr Cc:
-grephdr Cc: 'My Test 16 ReplyTo <test16mailreply@example.org>, "Carbon Copy 16" <cc16@example.org>, My Test 16 <test16@example.org>'
+grephdr Cc: 'My Test 16 ReplyTo <test16mailreply@domain.example>, "Carbon Copy 16" <cc16@domain.example>, My Test 16 <test16@domain.example>'
 
 touch "$DIR"/replytolist
-echo "List for responses 17 <test17listreply@example.org>" > "$DIR"/replyto
+echo "List for responses 17 <test17listreply@domain.example>" > "$DIR"/replyto
 
 cat >"$TMP" <<EOF
-From: My Test 17 <test17@example.org>
-Reply-To: My Test 17 ReplyTo <test17mailreply@example.org>
+From: My Test 17 <test17@domain.example>
+Reply-To: My Test 17 ReplyTo <test17mailreply@domain.example>
 To: ${LIST}@${HOST}
-Cc: "Carbon Copy 17" <cc17@example.org>
+Cc: "Carbon Copy 17" <cc17@domain.example>
 Subject: reply-to and carbon-copied test post
 
 message goes here
@@ -137,9 +151,9 @@ ${EZBIN}/ezmlm-send "$DIR" <"$TMP" >"$ERR" 2>&1 || \
 unfoldhdrs
 grephdr From: "\"My Test 17 via ${LIST}\" <${LIST}@${HOST}>$"
 singlehdr Reply-To:
-grephdr Reply-To: "List for responses 17 <test17listreply@example.org>"
+grephdr Reply-To: "List for responses 17 <test17listreply@domain.example>"
 singlehdr Cc:
-grephdr Cc: 'My Test 17 ReplyTo <test17mailreply@example.org>, "Carbon Copy 17" <cc17@example.org>, My Test 17 <test17@example.org>'
+grephdr Cc: 'My Test 17 ReplyTo <test17mailreply@domain.example>, "Carbon Copy 17" <cc17@domain.example>, My Test 17 <test17@domain.example>'
 
 rm -f "$DIR"/replyto
 rm -f "$DIR"/rewritefrom
