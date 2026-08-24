@@ -120,9 +120,9 @@ int main(int argc,char **argv)
 	if (ret) break;
 	i = j + 1;
     }
-    if (!ret || ret == 99)		/* 111 => temp error */
-      ismod = 1;			/* 0, 99 => post */
-					/* other => moderate */
+    if (ret == 99)		/* 99 => unconditional post */
+      ismod = 1;
+					/* 100 => always moderate, 0 => check moddir entries */
   }
   moddir = argv[opt++];
   if (moddir && !ret) {			/* if exit 0 and moddir, add issub */
