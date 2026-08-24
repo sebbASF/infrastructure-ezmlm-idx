@@ -189,7 +189,7 @@ check_manage() {
     local sender="$6"
     ${EZBIN}/ezmlm-manage -a $options "$DIR" < "$TMP" > "$ERR" 2>&1
     local e=$?
-    test $e -eq $exit || fatal "ezmlm-manage ($name) $exitmsg (exit $e)"
+    test $e -eq $exit || fatal "ezmlm-manage ($name) $exitmsg (expected exit code $exit, got $e)"
     if [ -n "$text" ]
     then
 	grep "ezmlm-manage: info: sending $text$" "$ERR" >/dev/null 2>&1 \
