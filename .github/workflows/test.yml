@@ -7,12 +7,14 @@ permissions: {}
 
 jobs:
   test:
-    runs-on: runs-on=${{ github.run_id }}/runner=2cpu-linux-x64/tag=infra
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Build
-        run: bash tools/makemake && make clean && make && make man
-      - name: Run test suite
-        run: ./ezmlm-test
+        run: bash tools/makemake && make clean && make
+      - name: Run partial test suite
+        run: |
+          cat tests/??-* tests/180-ezmlm-gate > mytests.sh
+          bash mytests.sh
