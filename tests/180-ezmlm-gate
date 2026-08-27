@@ -34,4 +34,22 @@ checkenv gate3 "$LIST-return-.*-@$HOST-@\\[\\]" "$SND@$HOST" "$MAN@$HOST" "$BNC@
 make_message | ${EZBIN}/ezmlm-gate "$DIR" /etc/"$DIR" > "$ERR" 2>&1 \
 && fatal "failed to reject bad command line 1"
 
+# Check that gate queues email if no sub lists are provided
+SENDER="${SND}@${HOST}"
+{ echo "X-num: gate4"; make_message; } \
+| ${EZBIN}/ezmlm-gate -rY "$DIR" > "$ERR" 2>&1 \
+|| fatal "failed to process message 4"
+cat "$DIR"/mod/pending/* | grep "gate4" > /dev/null \
+|| fatal "failed to queue message 4"
+checkenv gate4 "$LIST-return-@$HOST" "$MOD@$HOST"
+
+# Check that gate queues email if no sub lists are provided if arbitrator (/dev/null) returns 0
+SENDER="${SND}@${HOST}"
+{ echo "X-num: gate5"; make_message; } \
+| ${EZBIN}/ezmlm-gate -rYq /dev/null "$DIR" > "$ERR" 2>&1 \
+|| fatal "failed to process message 5"
+cat "$DIR"/mod/pending/* | grep "gate5" > /dev/null \
+|| fatal "failed to queue message 5"
+checkenv gate5 "$LIST-return-@$HOST" "$MOD@$HOST"
+
 echo "OK"
