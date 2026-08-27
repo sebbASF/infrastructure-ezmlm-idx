@@ -1,0 +1,17 @@
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build
+        run: bash tools/makemake && make clean && make
+      - name: Run test suite
+        run: |
+          ./ezmlm-test
