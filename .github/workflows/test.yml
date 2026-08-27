@@ -16,5 +16,5 @@ jobs:
         run: bash tools/makemake && make clean && make
       - name: Run partial test suite
         run: |
-          cat tests/??-* tests/180-ezmlm-gate > mytests.sh
+          cat tests/0?-* tests/180-ezmlm-gate tests/9?-* > mytests.sh
           bash mytests.sh
